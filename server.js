@@ -115,24 +115,18 @@ app.post('/send-contact', async (req, res) => {
     // 3. Nodemailer Konfiguration (E-Mail Versand)
     // Nutze hier deine SMTP-Daten (z.B. von deinem Hosting bei SoftMaster)
     const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST, // Now SendGrid
+        host: process.env.SMTP_HOST,
         port: 587,
-        secure: false, // TLS
+        secure: false, 
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
-        }
+        },
+        connectionTimeout: 5000 // 5 seconds
     });
 
     console.log("5. Attempting to send Mail via SendGrid...");
-    // Teste die Verbindung beim Start
-    transporter.verify(function(error, success) {
-    if (error) {
-        console.log("❌ Mail Server Error:", error);
-    } else {
-        console.log("✅ Mail Server is ready to take our messages");
-    }
-    });
+
     const mailOptions = {
         from: '"SoftMaster Webformular" <noreply@softmaster.at>',
         to: "office@softmaster.at",
@@ -142,10 +136,12 @@ app.post('/send-contact', async (req, res) => {
     };
 
     try {
-        await transporter.sendMail(mailOptions);
-        res.send("success"); // Damit main.js bescheid weiß
+        console.log("5. Sending Mail...");
+        let info = await transporter.sendMail(mailOptions);
+        console.log("6. ✅ Mail Sent! ID:", info.messageId);
+        return res.send("success");
     } catch (error) {
-        console.error("Mail Error:", error);
-        res.send("mail_error");
+        console.error("❌ Mail Error:", error.message);
+        return res.send("mail_error");
     }
 });
