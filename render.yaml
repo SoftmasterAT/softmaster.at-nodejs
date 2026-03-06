@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: softmaster-nodejs
+    runtime: node
+    repo: https://github.com/Nodrex-86/softmaster.at-nodejs
+    branch: main
+    region: frankfurt
+    plan: free
+
+    buildCommand: npm install
+    startCommand: node server.js
+
+    autoDeploy: true
+
+    domains:
+      - node.softmaster.at
