@@ -6,6 +6,7 @@ const fs = require('fs');
 const { highlights, services, projects } = require('./data');
 
 const app = express();
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -123,7 +124,14 @@ app.post('/send-contact', async (req, res) => {
             rejectUnauthorized: false
         }
     });
-
+    // Teste die Verbindung beim Start
+    transporter.verify(function(error, success) {
+    if (error) {
+        console.log("❌ Mail Server Error:", error);
+    } else {
+        console.log("✅ Mail Server is ready to take our messages");
+    }
+    });
     const mailOptions = {
         from: '"SoftMaster Webformular" <noreply@softmaster.at>',
         to: "office@softmaster.at",
