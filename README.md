@@ -65,8 +65,9 @@ Security
 - Cloudflare Turnstile  
 - Environment Variables
 
-
-
+## Tech Stack Update
+- **Mailing:** SendGrid SDK (@sendgrid/mail) via HTTP API (Bypasses SMTP port blocks)
+- **Infrastructure:** Render.com (Linux Environment)
 
 ## Architecture
 
