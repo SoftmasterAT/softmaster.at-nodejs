@@ -64,7 +64,7 @@ app.get('/:page', (req, res) => {
     const viewPath = path.join(__dirname, 'views', `${pageKey}.ejs`);
 
     if (!fs.existsSync(viewPath)) {
-        return res.status(404).render('404'); // Better: render a 404.ejs
+        return res.status(404).send('Page not found');
     }
 
     res.render(pageKey, { 
@@ -119,7 +119,7 @@ app.post('/send-contact', async (req, res) => {
             pass: process.env.EMAIL_PASS
         },
         tls: {
-            ciphers: 'SSLv3',
+            //ciphers: 'SSLv3', // auskommentiert wegen - cloud providers (like Render) block outgoing traffic on certain mail ports to prevent spam.
             rejectUnauthorized: false
         }
     });
