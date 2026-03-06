@@ -4,6 +4,8 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const { highlights, services, projects } = require('./data');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.EMAIL_PASS); 
 
 const app = express();
 app.set('views', path.join(__dirname, 'views'));
@@ -112,42 +114,21 @@ app.post('/send-contact', async (req, res) => {
         return res.send("validation_error");
     }
     
-    // 3. Nodemailer Konfiguration (E-Mail Versand)
-    // Nutze hier deine SMTP-Daten (z.B. von deinem Hosting bei SoftMaster)
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.sendgrid.net',
-        port: 465,
-        secure: true, // Use SSL/TLS
-        auth: {
-            user: 'apikey',
-            pass: process.env.EMAIL_PASS // Your SG.xxx key
-        },
-        connectionTimeout: 10000, // Give it 10s for the handshake
-    });
-
-    console.log("5. Attempting to send Mail via SendGrid...");
-
-    const mailOptions = {
-        from: '"SoftMaster Webformular" <noreply@softmaster.at>',
-        to: "office@softmaster.at",
+    const msg = {
+        to: 'office@softmaster.at',
+        from: 'office@softmaster.at', // MUSS in SendGrid verifiziert sein!
         replyTo: email,
-        subject: `Kontaktformular: ${subject}`,
-        text: `Name: ${name}\nEmail: ${email}\n\nNachricht:\n${message}`
+        subject: `Kontakt: ${subject}`,
+        text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
     };
 
     try {
-        console.log("5. Sending Mail via Port 465...");
-        let info = await transporter.sendMail({
-            from: '"SoftMaster Web" <office@softmaster.at>', // Use the address you verified in SendGrid
-            to: "office@softmaster.at",
-            replyTo: email,
-            subject: `Kontakt: ${subject}`,
-            text: `Name: ${name}\nEmail: ${email}\n\n${message}`
-        });
-        console.log("6. ✅ Mail Sent! ID:", info.messageId);
-        return res.status(200).send("success");
+        console.log("5. Sende Mail via SendGrid API...");
+        await sgMail.send(msg);
+        console.log("6. ✅ Mail erfolgreich versendet!");
+        res.send("success");
     } catch (error) {
-        console.error("❌ Mail Error Details:", error.message);
-        return res.status(500).send("mail_error");
+        console.error("❌ SendGrid API Error:", error.response ? error.response.body : error.message);
+        res.send("mail_error");
     }
 });
