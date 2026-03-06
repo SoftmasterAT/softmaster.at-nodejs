@@ -113,19 +113,18 @@ app.post('/send-contact', async (req, res) => {
     // Nutze hier deine SMTP-Daten (z.B. von deinem Hosting bei SoftMaster)
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
-        port: 465,                   // Wechsel von 587 auf 465
-        secure: true,                // Muss true sein für Port 465
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 10000,
+        port: 465,
+        secure: true,
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
         },
-        tls: {
-            rejectUnauthorized: false
-        }
+        // Adding a very long timeout to see if it's just slow
+        connectionTimeout: 20000, 
+        greetingTimeout: 20000,
+        socketTimeout: 20000
     });
+
 
     // Teste die Verbindung beim Start
     transporter.verify(function(error, success) {
