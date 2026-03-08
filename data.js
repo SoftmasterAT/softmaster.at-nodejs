@@ -10,8 +10,8 @@ const highlights = [
     {
         title: 'Bank Management API',
         desc_key: 'rest_api',
-        image: 'img/services/service_branding_nodrex.webp',
-        link: 'https://github.com/Nodrex-86/bank-management-api',
+        image: 'img/services/service_branding_softmaster.webp',
+        link: 'https://github.com/SoftmasterAT/bank-management-api',
         hgl_btn_key: 'hgl_btn_github'
     },
     {
